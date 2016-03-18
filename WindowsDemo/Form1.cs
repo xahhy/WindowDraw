@@ -48,6 +48,17 @@ namespace WindowsDemo
         
         private void picturebox_Paint(object sender, PaintEventArgs e)
         {
+            /*
+            Graphics gg = Graphics.FromImage(picturebox.Image);
+            SolidBrush drawBrush = new SolidBrush(Color.Red);
+            Font drawFont = new Font("Arial", 10, FontStyle.Bold, GraphicsUnit.Millimeter);
+            int xPos = 1;
+            int yPos = 3;
+            gg.DrawString("你好ydyyydydy", drawFont, drawBrush, xPos, yPos);
+            picturebox.Image.Save("./temp.jpg");
+           // picturebox.Refresh();
+            gg.Dispose();
+            */
             
         }
         string str;
@@ -63,26 +74,44 @@ namespace WindowsDemo
             //picturebox.Refresh();
         }
         public static bool IsDraw = false;
+        public static bool IsText = false;
+        //Mouse position while painting image
         Point StartPoint = new Point(0, 0);
         Point EndPoint = new Point(0, 0);
+        //Mouse position while painting text
+        int TextX = 0;
+        int TextY = 0;
         private void picturebox_MouseDown(object sender, MouseEventArgs e)
         {
-            IsDraw = true;
-            StartPoint.X = e.X;
-            StartPoint.Y = e.Y;
-            Image temp = (Image)picturebox.Image.Clone();
-            temp.Save("./tempo.jpg");
-            temp.Dispose();
-        }
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                IsDraw = true;
+                StartPoint.X = e.X;
+                StartPoint.Y = e.Y;
+                Image temp = (Image)picturebox.Image.Clone();
+                temp.Save("./tempo.jpg");
+                temp.Dispose();
+            }
+            if (e.Button == MouseButtons.Right && e.Clicks == 1)
+            {
+                IsText = true;
+                TextX = e.X;
+                TextY = e.Y;
+                Image temp = (Image)picturebox.Image.Clone();
+                temp.Save("./tempo.jpg");
+                temp.Dispose();
+            }
+         }
 
         private void picturebox_MouseUp(object sender, MouseEventArgs e)
         {
-            IsDraw = false;
-            EndPoint.X = e.X;
-            EndPoint.Y = e.Y;
-                      
-            picturebox.Image.Save("./temp.jpg");            
-            
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                IsDraw = false;
+                EndPoint.X = e.X;
+                EndPoint.Y = e.Y;
+                picturebox.Image.Save("./temp.jpg");
+            }
         }
         Graphics g;
         private void picturebox_MouseMove(object sender, MouseEventArgs e)
@@ -147,11 +176,12 @@ namespace WindowsDemo
             picturebox.Size = new Size(BQ_SIZE_X,BQ_SIZE_Y);
             Bitmap bq_background2 = new Bitmap(BQ_SIZE_X,BQ_SIZE_Y);
             Graphics g = Graphics.FromImage(bq_background2);//create g Graphics from new Bitmap bq_background
-            g.FillRectangle(Brushes.Red, new Rectangle(0, 0, BQ_SIZE_X, BQ_SIZE_Y));
+            g.FillRectangle(Brushes.Green, new Rectangle(0, 0, BQ_SIZE_X, BQ_SIZE_Y));
             //picturebox.Image = bq_background2;
             //File.Delete("./background.jpg");
             bq_background2.Save("./background.jpg");
-            bq_background2.Dispose();
+            picturebox.Image = bq_background2;
+            //bq_background2.Dispose();
             g.Dispose();
         }
 
@@ -168,6 +198,39 @@ namespace WindowsDemo
         private void picturebox_MouseHover(object sender, EventArgs e)
         {
             
+        }
+        int GQ_SIZE_X = 1280;
+        int GQ_SIZE_Y = 720;
+        private void 高清ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            picturebox.Size = new Size(GQ_SIZE_X, GQ_SIZE_Y);
+            Bitmap bq_background2 = new Bitmap(GQ_SIZE_X, GQ_SIZE_Y);
+            Graphics g = Graphics.FromImage(bq_background2);//create g Graphics from new Bitmap bq_background
+            g.FillRectangle(Brushes.Green, new Rectangle(0, 0, GQ_SIZE_X, GQ_SIZE_Y));
+            //picturebox.Image = bq_background2;
+            //File.Delete("./background.jpg");
+            bq_background2.Save("./background.jpg");
+            picturebox.Image = bq_background2;
+            //bq_background2.Dispose();
+            g.Dispose();
+        }
+
+        private void addtext_Click(object sender, EventArgs e)
+        {           
+            Graphics g = Graphics.FromImage(picturebox.Image);
+            SolidBrush drawBrush = new SolidBrush(Color.Blue);
+            Font drawFont = new Font("Arial", 15, FontStyle.Bold, GraphicsUnit.Millimeter);            
+            g.DrawString(textBox1.Text, drawFont, drawBrush, TextX,TextY);
+            //picturebox.Image.Save("./temp.jpg");
+            picturebox.Refresh();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Image t = Image.FromFile("./tempo.jpg");
+            Bitmap tt = new Bitmap(t);
+            picturebox.Image = tt;
+            t.Dispose();
         }
     }
 }
