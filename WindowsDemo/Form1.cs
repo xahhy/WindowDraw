@@ -33,19 +33,19 @@ namespace WindowsDemo
                 //creat graphics for bitmap
                 Graphics g = Graphics.FromImage(bq_background);
                 //fill the graphics with one color
-                g.Clear(Color.White);            
+                g.Clear(Color.Green);            
                 //save the bitmap
                 bq_background.Save("./background.jpg");
                 picturebox.Image = bq_background;                        
             //}                       
         }
         
-        public Point PicLocation = new Point(200, 200);
+       
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
         }
-        Graphics canvas;
+        
         private void picturebox_Paint(object sender, PaintEventArgs e)
         {
             
@@ -81,12 +81,13 @@ namespace WindowsDemo
             EndPoint.X = e.X;
             EndPoint.Y = e.Y;
                       
-            //picturebox.Image.Save("./temp.jpg");            
+            picturebox.Image.Save("./temp.jpg");            
             
         }
         Graphics g;
         private void picturebox_MouseMove(object sender, MouseEventArgs e)
         {
+            pixel_location.Text = "(" + e.X.ToString() + "," + e.Y.ToString() + ")";
             if(IsDraw)
             {
                 //创建一个tempo.jpg的缓存图像，代表了MouseDown时刻的初始图片状态，每次移动都在在缓存图像上绘制制定的图片，并在picturebox.Image上
@@ -99,21 +100,44 @@ namespace WindowsDemo
                 EndPoint.X = e.X;
                 EndPoint.Y = e.Y;
                 if (str == ""||str==null) return;
-                int width, hight;
+                int width, hight;               
                 width = Math.Abs(EndPoint.X - StartPoint.X);
                 hight = Math.Abs(EndPoint.Y - StartPoint.Y);
+                
                 if (width == 0 || hight == 0) return;
                 Image Pic = new Bitmap(Image.FromFile(str), new Size(width,hight));
-                //picturebox.Refresh();
-                g.DrawImage(Pic,StartPoint);
+                /**
+                * 根据鼠标的位置不同将有可能出现的图片位置分为4个象限，每个象限对应一个画图片的顶点
+                */
+                Point location = new Point();
+                if(StartPoint.X >= EndPoint.X)
+                {
+                    if (StartPoint.Y >= EndPoint.Y)
+                    {
+                        location = EndPoint;
+                    }
+                    else
+                        location = new Point(EndPoint.X, StartPoint.Y);
+                }
+                else
+                {
+                    if (StartPoint.Y >= EndPoint.Y)
+                    {
+                        location = new Point(StartPoint.X, EndPoint.Y);
+                    }
+                    else
+                        location = StartPoint;
+                }
+                g.DrawImage(Pic,location);
                 //Image temp = (Image).Clone();
                 Graphics g2 = Graphics.FromImage(picturebox.Image);
-                picturebox.Refresh();
+                
                 g2.DrawImage(tempImage, 0, 0);
                 picturebox.Image.Save("./temp.jpg");
                 g2.Dispose();
                 tempImage.Dispose();
-                
+                //每次画完之后最后再更新窗体，否则会出现图像显示位置与鼠标不同步的状态
+                picturebox.Refresh();
             }
         }
         const int BQ_SIZE_X = 720;
@@ -129,6 +153,21 @@ namespace WindowsDemo
             bq_background2.Save("./background.jpg");
             bq_background2.Dispose();
             g.Dispose();
+        }
+
+        private void picturebox_MouseEnter(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void picturebox_MouseHover(object sender, EventArgs e)
+        {
+            
         }
     }
 }
